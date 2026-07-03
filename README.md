@@ -75,7 +75,7 @@ mdbook build
 3. 只选择 `liudezhi/TSCourse` 仓库授权。
 4. 仓库需要保持公开，否则访客无法读取评论。
 
-如果以后想关闭页面留言区，删除 `book.toml` 里的 `additional-css` 和 `additional-js` 两行即可。
+页面注入入口在 `theme/head.hbs`，反馈区样式和脚本在 `src/theme/`。如果以后想关闭页面留言区，删除 `theme/head.hbs` 即可。
 
 ## GitHub Pages 部署
 
