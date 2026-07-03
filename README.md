@@ -61,6 +61,22 @@ mdbook build
 
 构建结果会生成到 `book/` 目录，该目录已加入 `.gitignore`。
 
+## 学习者反馈与留言
+
+站点每个页面底部都会通过 `theme/course-feedback.js` 自动加入反馈区：
+
+1. `反馈此页` 会打开 GitHub Issue，并自动带上当前页面地址和对应源码路径。
+2. 留言区使用 Utterances，把页面评论保存到 GitHub Issues。
+
+启用留言区需要在仓库安装一次 Utterances App：
+
+1. 打开 https://github.com/apps/utterances。
+2. 点击 `Install`。
+3. 只选择 `liudezhi/TSCourse` 仓库授权。
+4. 仓库需要保持公开，否则访客无法读取评论。
+
+如果以后想关闭页面留言区，删除 `book.toml` 里的 `additional-css` 和 `additional-js` 两行即可。
+
 ## GitHub Pages 部署
 
 仓库推送到 `main` 或 `master` 分支后，GitHub Actions 会运行 `.github/workflows/deploy.yml`：

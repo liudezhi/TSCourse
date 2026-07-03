@@ -16,6 +16,8 @@ curly-quotes = false
 mathjax-support = false
 copy-fonts = true
 no-section-label = false
+additional-css = ["theme/course-feedback.css"]
+additional-js = ["theme/course-feedback.js"]
 
 [output.html.fold]
 enable = true
