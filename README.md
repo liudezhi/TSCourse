@@ -63,7 +63,7 @@ mdbook build
 
 ## 学习者反馈与留言
 
-站点每个页面底部都会通过 `theme/course-feedback.js` 自动加入反馈区：
+站点每个页面底部都会通过 `src/theme/course-feedback.js` 自动加入反馈区：
 
 1. `反馈此页` 会打开 GitHub Issue，并自动带上当前页面地址和对应源码路径。
 2. 留言区使用 Utterances，把页面评论保存到 GitHub Issues。
