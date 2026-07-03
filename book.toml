@@ -3,7 +3,6 @@ title = "30 天 TypeScript 精品课程"
 authors = ["Codex"]
 description = "从 C 程序员到读懂 TypeScript + Node.js + AI Agent CLI 源码"
 language = "zh-CN"
-multilingual = false
 src = "src"
 
 [build]
