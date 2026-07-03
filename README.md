@@ -70,4 +70,10 @@ mdbook build
 3. 上传 `book/` 目录。
 4. 发布到 GitHub Pages。
 
-在 GitHub 仓库设置里，将 Pages 的 Source 选择为 GitHub Actions。
+首次部署前，需要在 GitHub 仓库里手动启用一次 Pages：
+
+1. 打开 `Settings -> Pages`。
+2. 将 `Build and deployment` 里的 `Source` 选择为 `GitHub Actions`。
+3. 保存设置后，重新运行失败的 workflow，或推送一次新的提交。
+
+如果没有先启用 Pages，`actions/configure-pages@v5` 会在 CI 中报 `Get Pages site failed`。不要直接给 workflow 加 `enablement: true`，除非你已经额外配置了具有 Pages 写权限的 PAT secret；默认的 `GITHUB_TOKEN` 不能自动启用仓库 Pages。
