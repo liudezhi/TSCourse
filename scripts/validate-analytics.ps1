@@ -17,6 +17,23 @@ function Assert-FileContains {
   }
 }
 
+function Assert-FileDoesNotContain {
+  param(
+    [string]$Path,
+    [string]$Pattern,
+    [string]$Message
+  )
+
+  if (-not (Test-Path -LiteralPath $Path)) {
+    throw "Missing file: $Path"
+  }
+
+  $content = Get-Content -Raw -Encoding UTF8 $Path
+  if ($content -match $Pattern) {
+    throw $Message
+  }
+}
+
 Assert-FileContains -Path "theme/head.hbs" -Pattern "data-goatcounter" -Message "theme/head.hbs must load GoatCounter tracking."
 Assert-FileContains -Path "src/theme/course-feedback.js" -Pattern "course-stats\.json" -Message "course-feedback.js must load the public stats JSON."
 Assert-FileContains -Path "src/theme/course-feedback.js" -Pattern "currentPagePath" -Message "course-feedback.js must map the current mdBook page to a stats path."
@@ -26,6 +43,8 @@ Assert-FileContains -Path "scripts/build-public-stats.mjs" -Pattern "/api/v0" -M
 Assert-FileContains -Path "scripts/build-public-stats.mjs" -Pattern "GOATCOUNTER_REPORTING_UTC_OFFSET" -Message "build-public-stats.mjs must support a reporting timezone offset."
 Assert-FileContains -Path "scripts/build-public-stats.mjs" -Pattern "/stats/total" -Message "build-public-stats.mjs must read GoatCounter totals."
 Assert-FileContains -Path "scripts/build-public-stats.mjs" -Pattern "/stats/hits" -Message "build-public-stats.mjs must read GoatCounter page hits."
+Assert-FileContains -Path "scripts/build-public-stats.mjs" -Pattern "wrote disabled public stats" -Message "build-public-stats.mjs must fall back to disabled stats on recoverable GoatCounter failures."
+Assert-FileDoesNotContain -Path "scripts/build-public-stats.mjs" -Pattern "process\.exit\(1\)" -Message "build-public-stats.mjs must not fail Pages deployment when GoatCounter stats cannot be fetched."
 Assert-FileContains -Path ".github/workflows/deploy.yml" -Pattern "Build public analytics summary" -Message "deploy.yml must generate public stats during Pages build."
 Assert-FileContains -Path ".github/workflows/deploy.yml" -Pattern "GOATCOUNTER_API_TOKEN" -Message "deploy.yml must pass the GoatCounter API token through a secret."
 Assert-FileContains -Path ".github/workflows/deploy.yml" -Pattern "GOATCOUNTER_REPORTING_UTC_OFFSET" -Message "deploy.yml must set the analytics reporting timezone."
