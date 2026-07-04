@@ -31,6 +31,19 @@ jobs:
       - name: Build book
         run: mdbook build
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build public analytics summary
+        env:
+          GOATCOUNTER_SITE_CODE: ${{ vars.GOATCOUNTER_SITE_CODE }}
+          GOATCOUNTER_API_TOKEN: ${{ secrets.GOATCOUNTER_API_TOKEN }}
+          GOATCOUNTER_PUBLIC_BASE_PATH: /TSCourse
+          GOATCOUNTER_REPORTING_UTC_OFFSET: +08:00
+        run: node scripts/build-public-stats.mjs
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 

@@ -1,10 +1,26 @@
 (function () {
   const REPOSITORY = "liudezhi/TSCourse";
   const ISSUE_LABEL = "course-feedback";
+  const PROJECT_BASE_PATH = "/TSCourse";
 
   function pageTitle() {
     const heading = document.querySelector(".content main h1");
     return (heading ? heading.textContent : document.title).trim();
+  }
+
+  function normalizePath(path) {
+    let normalized = path.replace(new RegExp("^" + PROJECT_BASE_PATH + "/?"), "/");
+
+    if (!normalized || normalized === "/" || normalized === "/index.html") {
+      return "/";
+    }
+
+    normalized = normalized.replace(/\/index\.html$/, "/").replace(/\/$/, "");
+    return normalized || "/";
+  }
+
+  function currentPagePath() {
+    return normalizePath(window.location.pathname);
   }
 
   function sourcePath() {
@@ -31,6 +47,120 @@
     });
 
     return "https://github.com/" + REPOSITORY + "/issues/new?" + params.toString();
+  }
+
+  function feedbackScriptUrl() {
+    const script = document.currentScript || document.querySelector('script[src*="course-feedback.js"]');
+    return script ? script.src : "";
+  }
+
+  function statsUrl() {
+    const scriptUrl = feedbackScriptUrl();
+    return scriptUrl ? new URL("course-stats.json", scriptUrl).toString() : "theme/course-stats.json";
+  }
+
+  function formatNumber(value) {
+    const number = Number(value || 0);
+    return number.toLocaleString("zh-CN");
+  }
+
+  function findPageViews(stats) {
+    const pages = stats.pages || {};
+    const path = currentPagePath();
+    return pages[path] || pages[path + "/"] || 0;
+  }
+
+  function createMetric(label, value) {
+    const item = document.createElement("div");
+    item.className = "course-stats__metric";
+
+    const valueElement = document.createElement("strong");
+    valueElement.className = "course-stats__value";
+    valueElement.textContent = formatNumber(value);
+
+    const labelElement = document.createElement("span");
+    labelElement.className = "course-stats__label";
+    labelElement.textContent = label;
+
+    item.appendChild(valueElement);
+    item.appendChild(labelElement);
+    return item;
+  }
+
+  function createTopPagesList(pages) {
+    const list = document.createElement("ol");
+    list.className = "course-stats__top-list";
+
+    pages.slice(0, 10).forEach(function (page) {
+      const item = document.createElement("li");
+      item.className = "course-stats__top-item";
+
+      const title = document.createElement("span");
+      title.className = "course-stats__top-title";
+      title.textContent = page.title || page.path || "未命名页面";
+
+      const views = document.createElement("span");
+      views.className = "course-stats__top-views";
+      views.textContent = formatNumber(page.views) + " 次";
+
+      item.appendChild(title);
+      item.appendChild(views);
+      list.appendChild(item);
+    });
+
+    return list;
+  }
+
+  function renderCourseStats(stats) {
+    if (!stats || !stats.enabled) {
+      return null;
+    }
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "course-stats";
+    wrapper.setAttribute("aria-label", "课程访问统计");
+
+    const title = document.createElement("h3");
+    title.className = "course-stats__title";
+    title.textContent = "访问统计";
+
+    const metrics = document.createElement("div");
+    metrics.className = "course-stats__metrics";
+    metrics.appendChild(createMetric("本站访问", stats.totals && stats.totals.allTime));
+    metrics.appendChild(createMetric("今日访问", stats.totals && stats.totals.today));
+    metrics.appendChild(createMetric("本页阅读", findPageViews(stats)));
+
+    wrapper.appendChild(title);
+    wrapper.appendChild(metrics);
+
+    if (Array.isArray(stats.topPages) && stats.topPages.length > 0) {
+      const topTitle = document.createElement("h4");
+      topTitle.className = "course-stats__subtitle";
+      topTitle.textContent = "热门章节 Top 10";
+
+      wrapper.appendChild(topTitle);
+      wrapper.appendChild(createTopPagesList(stats.topPages));
+    }
+
+    return wrapper;
+  }
+
+  function appendCourseStats(section) {
+    fetch(statsUrl(), { cache: "no-store" })
+      .then(function (response) {
+        return response.ok ? response.json() : null;
+      })
+      .then(function (stats) {
+        const statsBlock = renderCourseStats(stats);
+        const header = section.querySelector(".course-feedback__header");
+
+        if (statsBlock && header) {
+          header.insertAdjacentElement("afterend", statsBlock);
+        }
+      })
+      .catch(function () {
+        // Stats are optional; feedback and comments should still work offline.
+      });
   }
 
   function appendUtterances(container) {
@@ -69,6 +199,7 @@
     ].join("");
 
     main.appendChild(section);
+    appendCourseStats(section);
     appendUtterances(section.querySelector(".course-feedback__comments"));
   }
 
