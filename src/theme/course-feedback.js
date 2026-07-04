@@ -91,7 +91,7 @@
     const list = document.createElement("ol");
     list.className = "course-stats__top-list";
 
-    pages.slice(0, 10).forEach(function (page) {
+    pages.slice(0, 3).forEach(function (page) {
       const item = document.createElement("li");
       item.className = "course-stats__top-item";
 
@@ -144,7 +144,7 @@
     if (Array.isArray(stats.topPages) && stats.topPages.length > 0) {
       const topTitle = document.createElement("h4");
       topTitle.className = "course-stats__subtitle";
-      topTitle.textContent = "热门章节 Top 10";
+      topTitle.textContent = "热门章节 Top 3";
 
       wrapper.appendChild(topTitle);
       wrapper.appendChild(createTopPagesList(stats.topPages));
@@ -160,10 +160,10 @@
       })
       .then(function (stats) {
         const statsBlock = renderCourseStats(stats);
-        const header = section.querySelector(".course-feedback__header");
+        const comments = section.querySelector(".course-feedback__comments");
 
-        if (statsBlock && header) {
-          header.insertAdjacentElement("afterend", statsBlock);
+        if (statsBlock && comments) {
+          comments.insertAdjacentElement("afterend", statsBlock);
         }
       })
       .catch(function () {

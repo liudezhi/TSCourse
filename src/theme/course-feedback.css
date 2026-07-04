@@ -52,10 +52,9 @@
 }
 
 .course-stats {
-  margin: 1.25rem 0;
-  padding: 1rem 0;
+  margin: 2.75rem 0 0;
+  padding: 1.25rem 0 0;
   border-top: 1px solid var(--table-border-color, #d8dee4);
-  border-bottom: 1px solid var(--table-border-color, #d8dee4);
 }
 
 .course-stats__title,
