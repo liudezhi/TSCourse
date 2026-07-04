@@ -12,9 +12,8 @@ create-missing = false
 [output.html]
 default-theme = "light"
 preferred-dark-theme = "navy"
-curly-quotes = false
+smart-punctuation = false
 mathjax-support = false
-copy-fonts = true
 no-section-label = false
 
 [output.html.fold]
