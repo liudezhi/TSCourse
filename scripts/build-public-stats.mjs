@@ -249,7 +249,7 @@ async function main() {
 }
 
 main().catch(async (error) => {
-  console.error(error);
+  console.warn(`GoatCounter stats unavailable: ${error.message}`);
   await writeSummary(defaultSummary(false));
-  process.exit(1);
+  console.warn(`GoatCounter stats unavailable; wrote disabled public stats to ${OUTPUT_PATH}`);
 });

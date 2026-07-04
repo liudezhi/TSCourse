@@ -100,6 +100,7 @@ https://tscourse.goatcounter.com/count
 2. `Settings -> Secrets and variables -> Actions -> Secrets` 中新增 `GOATCOUNTER_API_TOKEN`，值为 GoatCounter API token。
 
 如果暂时没有配置 `GOATCOUNTER_API_TOKEN`，部署不会失败，但页面不会展示访问统计摘要。
+如果 `GOATCOUNTER_SITE_CODE` 填错，或 GoatCounter 后台还没有创建对应站点，部署也会继续完成，但统计摘要会保持隐藏。站点代码就是 GoatCounter 地址里 `.goatcounter.com` 前面的部分，例如 `https://my-course.goatcounter.com` 的站点代码是 `my-course`。
 
 ## GitHub Pages 部署
 
