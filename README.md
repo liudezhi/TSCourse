@@ -67,6 +67,7 @@ mdbook build
 
 1. `反馈此页` 会打开 GitHub Issue，并自动带上当前页面地址和对应源码路径。
 2. 留言区使用 Utterances，把页面评论保存到 GitHub Issues。
+3. 访问统计使用 GoatCounter 记录页面访问，并只公开聚合摘要数据：本站访问、今日访问、本页阅读和热门章节 Top 10。
 
 启用留言区需要在仓库安装一次 Utterances App：
 
@@ -76,6 +77,29 @@ mdbook build
 4. 仓库需要保持公开，否则访客无法读取评论。
 
 页面注入入口在 `theme/head.hbs`，反馈区样式和脚本在 `src/theme/`。如果以后想关闭页面留言区，删除 `theme/head.hbs` 即可。
+
+## 访问统计配置
+
+站点默认按 GoatCounter 站点代码 `tscourse` 接入：
+
+```html
+https://tscourse.goatcounter.com/count
+```
+
+如果你注册 GoatCounter 时使用了别的站点代码，需要同步修改两个地方：
+
+1. `theme/head.hbs` 里的 `data-goatcounter` 地址。
+2. GitHub 仓库变量 `GOATCOUNTER_SITE_CODE`。
+
+公开统计摘要由 GitHub Actions 在构建时生成到 `book/theme/course-stats.json`。前端只读取这个公开 JSON，不暴露 GoatCounter API token。
+`今日访问` 默认按北京时间 `+08:00` 计算；如果以后站点主要面向其他时区，可以修改 `.github/workflows/deploy.yml` 里的 `GOATCOUNTER_REPORTING_UTC_OFFSET`。
+
+需要在 GitHub 仓库配置：
+
+1. `Settings -> Secrets and variables -> Actions -> Variables` 中新增 `GOATCOUNTER_SITE_CODE`，值为 GoatCounter 站点代码，例如 `tscourse`。
+2. `Settings -> Secrets and variables -> Actions -> Secrets` 中新增 `GOATCOUNTER_API_TOKEN`，值为 GoatCounter API token。
+
+如果暂时没有配置 `GOATCOUNTER_API_TOKEN`，部署不会失败，但页面不会展示访问统计摘要。
 
 ## GitHub Pages 部署
 
