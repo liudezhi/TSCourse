@@ -72,6 +72,7 @@ function longAgo() {
 function defaultSummary(enabled = false) {
   return {
     enabled,
+    status: enabled ? "ready" : "disabled",
     generatedAt: enabled ? new Date().toISOString() : null,
     site: SITE_CODE,
     totals: {
@@ -80,6 +81,14 @@ function defaultSummary(enabled = false) {
     },
     pages: {},
     topPages: []
+  };
+}
+
+function unavailableSummary(error) {
+  return {
+    ...defaultSummary(true),
+    status: "unavailable",
+    message: "统计数据准备中"
   };
 }
 
@@ -250,6 +259,6 @@ async function main() {
 
 main().catch(async (error) => {
   console.warn(`GoatCounter stats unavailable: ${error.message}`);
-  await writeSummary(defaultSummary(false));
-  console.warn(`GoatCounter stats unavailable; wrote disabled public stats to ${OUTPUT_PATH}`);
+  await writeSummary(unavailableSummary(error));
+  console.warn(`GoatCounter stats unavailable; wrote unavailable public stats to ${OUTPUT_PATH}`);
 });

@@ -88,6 +88,13 @@
   font-size: 0.9rem;
 }
 
+.course-stats__notice {
+  margin: 0;
+  color: var(--fg);
+  opacity: 0.78;
+  line-height: 1.7;
+}
+
 .course-stats__subtitle {
   margin-top: 1rem;
 }

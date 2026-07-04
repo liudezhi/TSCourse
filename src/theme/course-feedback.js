@@ -123,6 +123,15 @@
     const title = document.createElement("h3");
     title.className = "course-stats__title";
     title.textContent = "访问统计";
+    wrapper.appendChild(title);
+
+    if (stats.status === "unavailable") {
+      const notice = document.createElement("p");
+      notice.className = "course-stats__notice";
+      notice.textContent = stats.message || "统计数据准备中";
+      wrapper.appendChild(notice);
+      return wrapper;
+    }
 
     const metrics = document.createElement("div");
     metrics.className = "course-stats__metrics";
@@ -130,7 +139,6 @@
     metrics.appendChild(createMetric("今日访问", stats.totals && stats.totals.today));
     metrics.appendChild(createMetric("本页阅读", findPageViews(stats)));
 
-    wrapper.appendChild(title);
     wrapper.appendChild(metrics);
 
     if (Array.isArray(stats.topPages) && stats.topPages.length > 0) {
