@@ -80,10 +80,10 @@ mdbook build
 
 ## 访问统计配置
 
-站点默认按 GoatCounter 站点代码 `tscourse` 接入：
+站点默认按 GoatCounter 站点代码 `ldztscourse` 接入：
 
 ```html
-https://tscourse.goatcounter.com/count
+https://ldztscourse.goatcounter.com/count
 ```
 
 如果你注册 GoatCounter 时使用了别的站点代码，需要同步修改两个地方：
@@ -96,7 +96,7 @@ https://tscourse.goatcounter.com/count
 
 需要在 GitHub 仓库配置：
 
-1. `Settings -> Secrets and variables -> Actions -> Variables` 中新增 `GOATCOUNTER_SITE_CODE`，值为 GoatCounter 站点代码，例如 `tscourse`。
+1. `Settings -> Secrets and variables -> Actions -> Variables` 中新增 `GOATCOUNTER_SITE_CODE`，值为 GoatCounter 站点代码，例如 `ldztscourse`。
 2. `Settings -> Secrets and variables -> Actions -> Secrets` 中新增 `GOATCOUNTER_API_TOKEN`，值为 GoatCounter API token。
 
 如果暂时没有配置 `GOATCOUNTER_API_TOKEN`，部署不会失败，但页面不会展示访问统计摘要。

@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-const SITE_CODE = process.env.GOATCOUNTER_SITE_CODE || "tscourse";
+const SITE_CODE = process.env.GOATCOUNTER_SITE_CODE || "ldztscourse";
 const API_TOKEN = process.env.GOATCOUNTER_API_TOKEN || "";
 const PUBLIC_BASE_PATH = normalizeBasePath(process.env.GOATCOUNTER_PUBLIC_BASE_PATH || "/TSCourse");
 const REPORTING_UTC_OFFSET = parseUtcOffset(process.env.GOATCOUNTER_REPORTING_UTC_OFFSET || "+08:00");
