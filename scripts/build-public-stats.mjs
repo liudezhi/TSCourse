@@ -22,6 +22,8 @@ function normalizePublicPath(rawPath) {
 
   if (/^https?:\/\//.test(normalized)) {
     normalized = new URL(normalized).pathname;
+  } else {
+    normalized = new URL(normalized, "https://example.invalid").pathname;
   }
 
   if (PUBLIC_BASE_PATH && normalized.startsWith(PUBLIC_BASE_PATH + "/")) {
@@ -192,24 +194,33 @@ async function readTotal(start, end, publicPath) {
   return extractCount(await goat("/stats/total", params));
 }
 
-async function readTopPages(start, end, titleByPath) {
+async function readPageHits(start, end, titleByPath) {
   const response = await goat("/stats/hits", {
     start: isoDate(start),
     end: isoDate(end),
-    limit: "10"
+    limit: "200"
   });
 
-  return extractHits(response)
-    .map((item) => {
-      const publicPath = normalizePublicPath(item.path || item.name || "");
-      return {
-        path: publicPath,
-        title: titleByPath.get(publicPath) || item.title || item.name || publicPath,
-        views: extractCount(item)
-      };
-    })
-    .filter((item) => item.path && item.views > 0)
-    .slice(0, 10);
+  const viewsByPath = new Map();
+
+  extractHits(response).forEach((item) => {
+    const publicPath = normalizePublicPath(item.path || item.name || "");
+    const views = extractCount(item);
+
+    if (!publicPath || views <= 0) {
+      return;
+    }
+
+    viewsByPath.set(publicPath, (viewsByPath.get(publicPath) || 0) + views);
+  });
+
+  return Array.from(viewsByPath.entries())
+    .map(([publicPath, views]) => ({
+      path: publicPath,
+      title: titleByPath.get(publicPath) || publicPath,
+      views
+    }))
+    .sort((left, right) => right.views - left.views);
 }
 
 async function main() {
@@ -225,22 +236,14 @@ async function main() {
   const coursePages = await readCoursePages();
   const titleByPath = new Map(coursePages.map((page) => [page.path, page.title]));
 
-  const [allTime, todayTotal, topPages] = await Promise.all([
+  const [allTime, todayTotal, pageHits] = await Promise.all([
     readTotal(start, now),
     readTotal(today, now),
-    readTopPages(start, now, titleByPath)
+    readPageHits(start, now, titleByPath)
   ]);
 
-  const pageEntries = await Promise.all(
-    coursePages.map(async (page) => {
-      try {
-        return [page.path, await readTotal(start, now, page.path)];
-      } catch (error) {
-        console.warn(`Could not fetch page stats for ${page.path}: ${error.message}`);
-        return [page.path, 0];
-      }
-    })
-  );
+  const pageViews = new Map(pageHits.map((page) => [page.path, page.views]));
+  const pageEntries = coursePages.map((page) => [page.path, pageViews.get(page.path) || 0]);
 
   await writeSummary({
     enabled: true,
@@ -251,7 +254,7 @@ async function main() {
       today: todayTotal
     },
     pages: Object.fromEntries(pageEntries),
-    topPages
+    topPages: pageHits.slice(0, 10)
   });
 
   console.log(`Wrote public GoatCounter stats to ${OUTPUT_PATH}`);
